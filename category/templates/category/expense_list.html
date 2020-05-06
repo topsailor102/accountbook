@@ -1,0 +1,27 @@
+{% extends "base_template.html" %}
+
+{% block content %}
+	<h1>Expense History</h1>
+  	{% if expense_list %}
+
+	<table  style="text-align:center" border="2" bordercolor="green" width=70%">
+		<tr bgcolor="skyblue" align="center">
+		<th style="font-size:20px">Place</th><th style="font-size:20px">Cost</th><th width=60% style="font-size:20px">Summary</th>
+		</tr>
+		
+		{% for expense in expense_list %}
+
+	  	<tr>
+			<td><a href="{{ expense.get_absolute_url }}">{{ expense.place }}</a></td>
+			<td style="text-align:right">{{ expense.cost }}</td>
+			<td>{{expense.summary}}</td>
+		</tr>
+		
+		{% endfor %}
+	</table>
+
+  	{% else %}
+   	 <p>Error! No history for the expense could gather.</p>
+  	{% endif %}       
+{% endblock %}
+

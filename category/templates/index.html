@@ -1,0 +1,15 @@
+{% extends "base_template.html" %}
+
+{% block content %}
+	<h1>Account Book Home</h1>
+  	<p>Welcome to the AccoutBook developed by <em>SeungSeungPapa</em> !!</p>
+  	<!-- <h2>Dynamic Design</h2> -->
+  	<p>It shows the following record counts:</p>
+  	<ul>
+    	<li><strong>Expenses:</strong> {{ num_expense }}</li>
+    	<li><strong>Payments:</strong> {{ num_ways }}</li>
+    	<li><strong>Sectors for expenses:</strong> {{ num_sectors }}</li>
+  	</ul>
+  	
+  	<p> You have visited this page {{num_visits}}{% if num_visites == 1 %} time{% else %} times{% endif %}.</p>
+{% endblock %}

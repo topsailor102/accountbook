@@ -1,0 +1,8 @@
+__pycache__/
+migrations/
+*.csv
+*db.sqlite3*
+*.ipynb
+*.project
+*.pydevproject
+*.pyc
