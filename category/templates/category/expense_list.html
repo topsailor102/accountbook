@@ -1,17 +1,18 @@
 {% extends "base_template.html" %}
 
 {% block content %}
-	<h1>Expense History</h1>
+	<h2>Expense History</h2>
   	{% if expense_list %}
 
-	<table  style="text-align:center" border="2" bordercolor="green" width=70%">
-		<tr bgcolor="skyblue" align="center">
-		<th style="font-size:20px">Place</th><th style="font-size:20px">Cost</th><th width=60% style="font-size:20px">Summary</th>
+	<table table class="table-striped table-sm" style="text-align:center" border="2" bordercolor="green" width=80%">
+		<tr bgcolor="skyblue" align="center" style="font-size:20px">
+		<th>Date</th><th>Place</th><th>Cost</th><th width=60%>Summary</th>
 		</tr>
 		
 		{% for expense in expense_list %}
 
 	  	<tr>
+	  		<td style="text-align:left">{{ expense.dateinfo }}</td>
 			<td><a href="{{ expense.get_absolute_url }}">{{ expense.place }}</a></td>
 			<td style="text-align:right">{{ expense.cost }}</td>
 			<td>{{expense.summary}}</td>

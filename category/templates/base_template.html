@@ -15,10 +15,11 @@
 			<div class="col-sm-2">
 			{% block sidebar %}
 				<ul class="sidebar-nav">
-					<li><a href="{% url 'index' %}">Home</a></li>
-					<li><a href="{% url 'expenses' %}">All Expenses</a></li>
-					<li><a href="{% url 'expense-create' %}">Add Expense</a></li>
-					<li><a href="{% url 'import-data' %}">Import data from the file</a>
+					<li><a class="nav-link active" href="{% url 'index' %}">Home</a></li>
+					<li><a class="nav-link active" href="{% url 'expenses' %}">All Expenses</a></li>
+					<li><a class="nav-link active" href="{% url 'expense-create' %}">Add Expense</a></li>
+					<li><a class="nav-link active" href="{% url 'import-data' %}">Import file</a>
+					<li><a class="nav-link active" href="{% url 'dashboard' %}">Dashboard</a>
 				</ul>
 				
 				{% if user.is_authenticated %}
