@@ -8,6 +8,9 @@ urlpatterns = [
     re_path(r'^expense/(?P<pk>\d+)$', views.ExpenseDetailView.as_view(), name='expense-detail'),
     path('import/', views.importData, name='import-data'),
     
+    path('dashboard/', views.drawDashboard, name='dashboard'),
+    path('dashboard/getdataset/', views.getDataset, name='get_dataset'),
+    
     path('expense/create/', views.ExpenseCreate.as_view(), name='expense-create'),
     path('expense/<int:pk>/update/', views.ExpenseUpdate.as_view(), name='expense-update'),
     path('expense/<int:pk>/delete/', views.ExpenseDelete.as_view(), name='expense-delete'),

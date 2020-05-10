@@ -10,6 +10,8 @@ from .forms import UploadExpenseForm
 from .datatransfer import get_date_from_the_file as dt
 from django.shortcuts import redirect
 
+from django.http import JsonResponse
+
 
 def index(request):
     """View function for home page of site"""
@@ -36,9 +38,10 @@ def index(request):
     # Render the HTML template index.html with the data in the context variable
     return render(request, 'index.html', context=context)
 
+
 class ExpenseListView(generic.ListView):
     model = Expense
-    paginate_by = 30
+    paginate_by = 21
     
     def get_queryset(self):
         return Expense.objects.filter(dateinfo__gte=datetime.now()-timedelta(1000))
@@ -54,11 +57,7 @@ class ExpenseDetailView(generic.DetailView):
             raise Http404('Expense does not exist')
         
         return render(request, 'category/expense_detail.html', context={'expense': thing})
-def importData(request):
-    """Import data from the .csv file"""
-    
-    
-    return render(request, 'import_data.html')
+
 
 class ExpenseCreate(CreateView):
     model = Expense
@@ -70,12 +69,14 @@ class ExpenseUpdate(UpdateView):
     model = Expense
     fields = ['place', 'cost', 'way', 'sector']
     
+    
 class ExpenseDelete(DeleteView):
     model = Expense
     success_url = reverse_lazy('expenses')
 
 
 def importData(request):
+    """Import data from the .csv file"""
     if request.method == 'POST':
         form = UploadExpenseForm(request.POST)
         
@@ -96,3 +97,53 @@ def importData(request):
         form = UploadExpenseForm()
         
     return render(request, 'import_data.html', {'form': form })
+
+
+from django.http import JsonResponse
+from django.db.models import Sum, Count
+from datetime import date
+import json
+
+def drawDashboard(request):
+    return render(request, 'dashboard.html')
+
+from django.db.models.functions import TruncMonth, TruncYear
+
+def getDataset(request):
+    labels = []
+    datasets = []
+    
+    sector_color = { '마켓':'red', '식사':'orange', '여행':'yellow', '고정비':'green', '교육':'skyblue', '병원':'blue',
+                    '쇼핑': 'purple', '은행(금전)': 'black', '주유': 'pink', '행정': 'gray' }
+    sector_list = ['마켓','식사','여행','고정비','교육','병원','쇼핑','은행(금전)','주유', '행정']
+
+    queryset_sc = Expense.objects.values('dateinfo__year','dateinfo__month', 'sector__name').order_by('dateinfo__year').annotate(sector__cost=Sum('cost'))
+    """
+    for query in queryset_sc:
+        print("{},{} - {} : {}".format(query['dateinfo__year'], query['dateinfo__month'], query['sector__name'], query['sector__cost']))
+    """
+    
+    queryset_cost = Expense.objects.values('dateinfo__year','dateinfo__month').order_by('dateinfo__year').annotate(Count('cost'))
+    for query in queryset_cost:
+        labels.append('{}-{}'.format(query['dateinfo__year'], query['dateinfo__month']))
+        
+    for sector in sector_list:
+        item = {}
+        item['data'] = []    
+        item['label'] = sector
+        item['backgroundColor'] = sector_color[sector]
+        
+        for query in queryset_cost:
+            #print("now checking {} year {} month with sector name {}".format(query['dateinfo__year'],query['dateinfo__month'], sector))
+            if not any(sc['dateinfo__year'] == query['dateinfo__year'] and sc['dateinfo__month'] == query['dateinfo__month'] and sc['sector__name'] == sector for sc in queryset_sc):
+                item['data'].append(0)
+            else:
+                [item['data'].append(round(float(sc['sector__cost']),2)) for sc in queryset_sc if sc['dateinfo__year'] == query['dateinfo__year'] and sc['dateinfo__month'] == query['dateinfo__month'] and sc['sector__name'] == sector]
+            
+        datasets.append(item)
+
+    return JsonResponse(data={
+        'labels': labels,
+        'datasets': datasets,    
+    })
+

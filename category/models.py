@@ -52,7 +52,7 @@ class Expense(models.Model):
         return reverse('expense-detail', args=[str(self.id)])
 
     class Meta:
-        ordering = [ '-dateinfo', 'creationinfo']
+        ordering = [ '-dateinfo', 'creationinfo', 'sector']
         
     def update_details(self):
         """Returns the url to access a detail record for this expense."""
