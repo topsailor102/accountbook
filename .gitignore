@@ -6,3 +6,5 @@ migrations/
 *.project
 *.pydevproject
 *.pyc
+.vscode
+test.html

@@ -3,3 +3,11 @@
     padding: 0;
     list-style: none;
 }
+
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+table { width: 100%;} 
+th {height: 40px; background-color: lightcyan;}
+th, td {text-align: center;}

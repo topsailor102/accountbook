@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 
-from .forms import UploadExpenseForm
+from .forms import UploadExpenseForm, ChartFilterForm
 from .datatransfer import get_date_from_the_file as dt
 from django.shortcuts import redirect
 
@@ -99,13 +99,40 @@ def importData(request):
     return render(request, 'import_data.html', {'form': form })
 
 
+def applyFilter(request):
+    """Apply filter to make a chart"""
+    
+    if request.method == 'POST':
+        form = ChartFilterForm(request.POST)
+        
+        if form.is_valid():
+            print("============>>>>>>>>>>")
+            period = form.cleaned_data['period']
+            kind = form.cleaned_data['kind']
+            print("period: {}, kind: {}".format(period, kind))
+            
+            return redirect('index')
+        else:
+            print("######################")
+    else:
+        form = ChartFilterForm()
+        #print(request.GET['kind'])
+        
+    return render(request, 'charts.html', {'form': form })
+
 from django.http import JsonResponse
-from django.db.models import Sum, Count
+from django.db.models import Sum, Count, F, Func
 from datetime import date
 import json
 
+class Round(Func):
+       function = 'ROUND'
+
 def drawDashboard(request):
-    return render(request, 'dashboard.html')
+    table_data = []
+    queryset = Expense.objects.filter(dateinfo__year=datetime.now().year).filter(dateinfo__month=datetime.now().month).values('sector__name').order_by('sector').annotate(sector__cost=Round(Sum('cost')))
+    print(queryset)
+    return render(request, 'dashboard.html', {'thismonth':datetime.now().month, 'queryset':queryset})
 
 from django.db.models.functions import TruncMonth, TruncYear
 
