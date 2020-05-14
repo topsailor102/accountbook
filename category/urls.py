@@ -10,6 +10,8 @@ urlpatterns = [
     
     path('dashboard/', views.drawDashboard, name='dashboard'),
     path('dashboard/getdataset/', views.getDataset, name='get_dataset'),
+    path('dashboard/filter/', views.applyFilter, name='filter'),
+    path('dashboard/filter/getdataset/', views.getDataset, name='get_dataset_from_filter'),
     
     path('expense/create/', views.ExpenseCreate.as_view(), name='expense-create'),
     path('expense/<int:pk>/update/', views.ExpenseUpdate.as_view(), name='expense-update'),
