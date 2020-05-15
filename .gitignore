@@ -9,3 +9,5 @@ migrations/
 .vscode
 test.html
 settings.py
+secrets.json
+
