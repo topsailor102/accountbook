@@ -150,7 +150,7 @@ def getDataset(request):
         print("{},{} - {} : {}".format(query['dateinfo__year'], query['dateinfo__month'], query['sector__name'], query['sector__cost']))
     """
     
-    queryset_cost = Expense.objects.values('dateinfo__year','dateinfo__month').order_by('dateinfo__year').annotate(Count('cost'))
+    queryset_cost = Expense.objects.values('dateinfo__year','dateinfo__month').order_by('dateinfo__year', 'dateinfo__month').annotate(Count('cost'))
     for query in queryset_cost:
         labels.append('{}-{}'.format(query['dateinfo__year'], query['dateinfo__month']))
         
