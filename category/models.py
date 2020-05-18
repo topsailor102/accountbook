@@ -58,3 +58,25 @@ class Expense(models.Model):
         """Returns the url to access a detail record for this expense."""
         return reverse('expense-update', args=[str(self.id)])
 
+
+class Currency(models.Model):
+    """Currency information"""
+    date            = models.DateField(auto_now=False, null=True, blank=True)
+    is_holiday      = models.BooleanField(default=False)
+    cur_unit        = models.CharField(max_length=200)
+    cur_nm          = models.CharField(max_length=200)
+    ttb             = models.DecimalField(max_digits=10, decimal_places=2)
+    tts             = models.DecimalField(max_digits=10, decimal_places=2)
+    deal_bas_r      = models.DecimalField(max_digits=10, decimal_places=2)
+    bkpr            = models.DecimalField(max_digits=10, decimal_places=2)
+    yy_efee_r       = models.DecimalField(max_digits=10, decimal_places=2)
+    ten_dd_efee_r   = models.DecimalField(max_digits=10, decimal_places=2)
+    kftc_deal_bas_r = models.DecimalField(max_digits=10, decimal_places=2)
+    kftc_bkpr       = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        """String for representing the Model object."""
+        return ({}-{}).format(self.date, self.cur_nm)
+    class Meta:
+        ordering = [ '-date', 'cur_nm']
+
