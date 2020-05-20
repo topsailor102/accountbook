@@ -76,7 +76,7 @@ class Currency(models.Model):
 
     def __str__(self):
         """String for representing the Model object."""
-        return ({}-{}).format(self.date, self.cur_nm)
+        return "{}@{}".format(self.cur_unit, self.date)
     class Meta:
         ordering = [ '-date', 'cur_nm']
 

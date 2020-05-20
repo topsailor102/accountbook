@@ -12,6 +12,8 @@ urlpatterns = [
     path('dashboard/getdataset/', views.getDataset, name='get_dataset'),
     path('dashboard/filter/', views.applyFilter, name='filter'),
     path('dashboard/filter/getdataset/', views.getDataset, name='get_dataset_from_filter'),
+    path('currency/', views.currencyTrend, name='currency'),
+    path('currency/getdataset', views.getCurrencyData, name='get_currency_data'),
     
     path('expense/create/', views.ExpenseCreate.as_view(), name='expense-create'),
     path('expense/<int:pk>/update/', views.ExpenseUpdate.as_view(), name='expense-update'),

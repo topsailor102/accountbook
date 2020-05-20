@@ -1,7 +1,7 @@
 import os, json
 import requests
 from datetime import date, datetime, timedelta
-from datatransfer import insert_data_to_db
+from .datatransfer import insert_data_to_db
 
 managed_cur = ['EUR', ]
 
@@ -57,4 +57,4 @@ def update_currency_through_api(days):
         
     insert_data_to_db(insert_query, "")
 
-update_currency_through_api(1)
+#update_currency_through_api(1)

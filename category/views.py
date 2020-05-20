@@ -1,16 +1,18 @@
-from django.shortcuts import render
-from .models import Sector, Way, Expense
+from django.shortcuts import render, redirect
 from django.views import generic
-from datetime import datetime, timedelta
-
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
+from django.http import JsonResponse
+from django.db.models import Sum, Count, F, Func
+from django.db.models.functions import TruncMonth, TruncYear
 
+from .models import Sector, Way, Expense, Currency
 from .forms import UploadExpenseForm, ChartFilterForm
 from .datatransfer import get_date_from_the_file as dt
-from django.shortcuts import redirect
+from .currency import update_currency_through_api as uc
 
-from django.http import JsonResponse
+from datetime import date, datetime, timedelta
+import json
 
 
 def index(request):
@@ -99,6 +101,51 @@ def importData(request):
     return render(request, 'import_data.html', {'form': form })
 
 
+def currencyTrend(request):
+    queryset = Expense.objects.filter(dateinfo__year=datetime.now().year).filter(dateinfo__month=datetime.now().month).values('sector__name').order_by('sector').annotate(sector__cost=Round(Sum('cost')))
+
+    return render(request, 'currency.html', {'thismonth':datetime.now().month, 'queryset':queryset})
+
+
+def getCurrencyData(request):
+    # update currency information through open api
+    uc(0)
+
+    labels = []
+    datasets = []
+    item = {}
+    data = []
+    item['label'] = "환율!"
+    item['backgroundColor'] = "rgba(78, 115, 223, 0.05)"
+    item['pointHoverRadius'] = 3
+    item['lineTension'] = 0.3
+    item['backgroundColor'] = "rgba(78, 115, 223, 0.05)"
+    item['borderColor'] = "rgba(78, 115, 223, 1)"
+    item['pointRadius'] = 3
+    item['pointBackgroundColor'] = "rgba(78, 115, 223, 1)"
+    item['pointBorderColor'] = "rgba(78, 115, 223, 1)"
+    item['pointHoverRadius'] = 3
+    item['pointHoverBackgroundColor'] = "rgba(78, 115, 223, 1)"
+    item['pointHoverBorderColor'] = "rgba(78, 115, 223, 1)"
+    item['pointHitRadius'] = 10
+    item['pointBorderWidth'] = 2
+    queryset = Currency.objects.filter(date__gte=datetime.now()-timedelta(100)).values('date','cur_unit','ttb', 'tts').order_by('date')
+    #print(queryset)
+    for query in queryset:
+        #print("{} >> {} 원/{}".format(query['date'], query['ttb'], query['cur_unit']))
+        labels.append(query['date'])
+        data.append(query['ttb'])
+    item['data'] = data
+    datasets.append(item)
+    #print(labels)
+    #print(datasets)
+    #print(data)
+    return JsonResponse(data={
+        'labels': labels,
+        'datasets': datasets,    
+    })
+
+
 def applyFilter(request):
     """Apply filter to make a chart"""
     
@@ -120,13 +167,10 @@ def applyFilter(request):
         
     return render(request, 'charts.html', {'form': form })
 
-from django.http import JsonResponse
-from django.db.models import Sum, Count, F, Func
-from datetime import date
-import json
 
 class Round(Func):
        function = 'ROUND'
+
 
 def drawDashboard(request):
     table_data = []
@@ -134,7 +178,6 @@ def drawDashboard(request):
     print(queryset)
     return render(request, 'dashboard.html', {'thismonth':datetime.now().month, 'queryset':queryset})
 
-from django.db.models.functions import TruncMonth, TruncYear
 
 def getDataset(request):
     labels = []

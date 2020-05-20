@@ -16,9 +16,6 @@ function barchart() {
             legend: {
             position: 'bottom',
           },
-          title: {
-            display: true, text: 'Monthly Expenses Chart'
-          },
           scales: {
             xAxes: [{
                 stacked: true, 
