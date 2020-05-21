@@ -2,6 +2,7 @@ import os, json
 import requests
 from datetime import date, datetime, timedelta
 from .datatransfer import insert_data_to_db
+from .get_variables import get_variables_list
 
 managed_cur = ['EUR', ]
 
@@ -9,15 +10,13 @@ def update_currency_through_api(days):
     """
     For updating EUR currency history at once
     """
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-    secret_file = os.path.join(BASE_DIR, 'secrets.json')
-    with open(secret_file) as f:
-        secrets = json.loads(f.read())
+    
+    # Get the variable list
+    variables = get_variables_list()
 
     url = ""
     url_prefix = "https://www.koreaexim.go.kr/site/program/financial/exchangeJSON?authkey="
-    secure_key = secrets['CUR_API_SECURE_KEY']
+    secure_key = variables['CUR_API_SECURE_KEY']
     datatype = "AP01"
 
     """

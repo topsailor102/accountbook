@@ -2,6 +2,7 @@ import sqlite3
 import psycopg2
 import csv
 import os, json
+from .get_variables import get_variables_list
 
 db_name = "db.sqlite3"
 
@@ -51,15 +52,12 @@ def insert_data_to_sqlite3(query, db_name):
     con.close()    
 
 def insert_data_to_db(query, db_name):
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    # Get the variable list
+    variables = get_variables_list()
 
-    secret_file = os.path.join(BASE_DIR, 'secrets.json')
-    with open(secret_file) as f:
-        secrets = json.loads(f.read())
-    
     #Establishing the connection
     conn = psycopg2.connect(
-        database=secrets['NAME'], user=secrets['USER'], password=secrets['PASSWORD'], host=secrets['HOST'], port= secrets['PORT']
+        database=variables['NAME'], user=variables['USER'], password=variables['PASSWORD'], host=variables['HOST'], port= variables['PORT']
     )
     #Setting auto commit false
     conn.autocommit = True

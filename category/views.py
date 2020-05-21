@@ -37,8 +37,20 @@ def index(request):
         'num_visits': num_visits,
         }
     
+    check_information_update()
+
     # Render the HTML template index.html with the data in the context variable
     return render(request, 'index.html', context=context)
+
+
+def check_information_update():
+    # Query DB to check if currency information has updated.
+    result = Currency.objects.order_by('date').values('date').last()
+    days = date.today() - result['date']
+
+    if days.days > 0:
+        # Call function if nothing has been updated for a while.
+        uc(days.days-1)
 
 
 class ExpenseListView(generic.ListView):
@@ -108,9 +120,6 @@ def currencyTrend(request):
 
 
 def getCurrencyData(request):
-    # update currency information through open api
-    uc(0)
-
     labels = []
     datasets = []
     item = {}
