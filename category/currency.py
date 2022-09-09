@@ -31,7 +31,8 @@ def update_currency_through_api(days):
         
         date = (datetime.today() - timedelta(days=i)).strftime('%Y-%m-%d')
         url = url_prefix + secure_key + "&" + "searchdate=" + date + "&data=" + datatype
-        response  = requests.get(url)
+        print(url)
+        response  = requests.get(url, verify=False)
         today_cur = response.json()
         is_holiday = False
         if not bool(today_cur) :

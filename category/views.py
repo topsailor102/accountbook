@@ -37,7 +37,7 @@ def index(request):
         'num_visits': num_visits,
         }
     
-    check_information_update()
+    #check_information_update()
 
     # Render the HTML template index.html with the data in the context variable
     return render(request, 'index.html', context=context)
@@ -184,7 +184,7 @@ class Round(Func):
 def drawDashboard(request):
     table_data = []
     queryset = Expense.objects.filter(dateinfo__year=datetime.now().year).filter(dateinfo__month=datetime.now().month).values('sector__name').order_by('sector').annotate(sector__cost=Round(Sum('cost')))
-    print(queryset)
+    #print(queryset)
     return render(request, 'dashboard.html', {'thismonth':datetime.now().month, 'queryset':queryset})
 
 
